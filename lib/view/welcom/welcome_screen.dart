@@ -1,5 +1,5 @@
 import 'package:firebase_auth/constans/String.dart';
-import 'package:firebase_auth/view/welcom/registernumber/register.dart';
+import 'package:firebase_auth/view/registernumber/register.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 

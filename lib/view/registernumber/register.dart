@@ -1,6 +1,7 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:firebase_auth/constans/String.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 
 // ignore: must_be_immutable
@@ -28,36 +29,55 @@ final TextEditingController phonecontroller =TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    phonecontroller.selection =TextSelection.fromPosition(TextPosition(offset: phonecontroller.text.length));
     return   Scaffold(
       body: SafeArea(
         child:Center(
           child: Padding(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               vertical:25,horizontal: 35),
               child: Column(
                 children: [
                  Container(
                   width: 200,
                   height: 200,
-                  decoration: BoxDecoration(
+                  decoration:const  BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.purple
                   ),
                   child: Lottie.asset('assets/register.json'),
                  ),
                  kheight20,
-                 Text("Add your phone Number. We'll send you a verification code",
+                 const Text("Add your phone Number. We'll send you a verification code",
                  style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold
                  ),
                  textAlign: TextAlign.center,),
                  kheight40,
-                 TextFormField(
+                 TextFormField(textInputAction:TextInputAction.none ,
+                 autocorrect: false,
+                  maxLength: 10,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly,
+                     ],
                   cursorColor: Colors.blueGrey,
                   controller:phonecontroller ,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      phonecontroller.text=value;
+                    });
+                  },
                   decoration: InputDecoration(
-                    helperText: 'Enter Phone number',
+                   // contentPadding: EdgeInsets.symmetric(vertical: 15),
+                    
+                    hintText: '  Enter Phone number',
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                       borderSide: const BorderSide(color: Colors.black26)
@@ -67,11 +87,11 @@ final TextEditingController phonecontroller =TextEditingController();
                       borderSide: const BorderSide(color: Colors.black26)
                     ),
                     prefix: Container(
-                      padding: EdgeInsets.all(8),
+                      padding:const  EdgeInsets.only(left:10),
                       child: InkWell(
                         onTap: (){
                           showCountryPicker(context: context , 
-                          countryListTheme: CountryListThemeData(
+                          countryListTheme:const  CountryListThemeData(
                             bottomSheetHeight: 500
                           ),
                           onSelect: (value){setState(() {
@@ -81,17 +101,56 @@ final TextEditingController phonecontroller =TextEditingController();
                           });
                         },
                         child: Text("${selectedcountry.flagEmoji} +${selectedcountry.phoneCode}",
-                        style: TextStyle(
+                        style:const  TextStyle(
                           fontSize: 18,
                           fontWeight:FontWeight.bold,
                           color: Colors.black
                         ),),
                       ),
+                    ),
+                    suffix: phonecontroller.text.length>9
+                    ?
+                    Container(
+                      height: 20,
+                      width: 20,
+                      margin: EdgeInsets.only(right:5,bottom: 5,left: 5,top: 5),
+                      decoration:const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.green
+                      ),
+                      child:const  Icon(Icons.done,
+                      color: Colors.white,
+                      size: 20,
+                      ),
                     )
+                    :null,
+
+                    
                   ),
                 
 
-                 )
+                 ),
+                 kheight20,
+                  SizedBox(
+                    height: 50,
+                    width: 250,
+                    child: ElevatedButton(
+                        onPressed: (){},
+                        style: ButtonStyle(
+                          foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                          backgroundColor: MaterialStateProperty.all<Color>(Colors.purple),
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24)
+                            ),
+                          ),
+                        ),
+                        child:const  Text(
+                          "Login",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                  ),
 
                 ],
               ),),
