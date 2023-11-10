@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "956751817496",
+    "firebase_url": "https://fir-phone-auth-3080b-default-rtdb.firebaseio.com",
+    "project_id": "fir-phone-auth-3080b",
+    "storage_bucket": "fir-phone-auth-3080b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:956751817496:android:3432bcf544a2c882e28c6d",
+        "android_client_info": {
+          "package_name": "com.example.firebase_auth"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdb5f_RE_N7qa69cG5ucRA7RxYAIAkCZ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
