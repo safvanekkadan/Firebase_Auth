@@ -1,7 +1,10 @@
 import 'package:Firebase_auth/constans/String.dart';
+import 'package:Firebase_auth/controller/auth_provider.dart';
+import 'package:Firebase_auth/view/homescreen/homescreen.dart';
 import 'package:Firebase_auth/view/registernumber/register.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -13,6 +16,7 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
+    final authinitialpro=Provider.of<AuthentificationProvider>(context,listen: false);
     return Scaffold(
       body: Column(
         children: [
@@ -33,8 +37,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               elevation: 0,
             ),
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => RegisterScreen()));
+              authinitialpro.isignedIn==true
+              ? Navigator.push(context,MaterialPageRoute(builder:(context)=>const HomeScreen() ))
+              :Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const RegisterScreen()));
             },
             child: const Text("Gets started "),
           ),
@@ -42,4 +48,5 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       ),
     );
   }
+
 }
