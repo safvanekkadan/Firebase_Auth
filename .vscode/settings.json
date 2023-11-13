@@ -1,4 +1,5 @@
 {
     "files.simpleDialog.enable": true,
-    "workbench.tree.expandMode": "singleClick"
+    "workbench.tree.expandMode": "singleClick",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

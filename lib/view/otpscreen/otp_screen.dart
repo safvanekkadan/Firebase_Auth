@@ -1,7 +1,10 @@
+import 'package:Firebase_auth/controller/auth_provider.dart';
 import 'package:Firebase_auth/utils/utilities.dart';
+import 'package:Firebase_auth/view/userinfo/user_info.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pinput/pinput.dart';
+import 'package:provider/provider.dart';
 
 import '../../constans/String.dart';
 
@@ -18,9 +21,17 @@ class _OtpScreenState extends State<OtpScreen> {
   String?otpCode;
   @override
   Widget build(BuildContext context) {
+       final isLoading =Provider.of<AuthentificationProvider>(context,listen: true).isLoading;
+
     return Scaffold(
        body: SafeArea(
-          child: Center(
+          child:isLoading== true 
+          ? const Center(
+            child:CircularProgressIndicator(
+              color: Colors.blue,
+            ) ,
+          ):
+           Center(
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -64,16 +75,17 @@ class _OtpScreenState extends State<OtpScreen> {
                     border: Border.all(color: Colors.purple
                   )
                 ),
-                textStyle: TextStyle(
+                textStyle: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
 
                 ),
               ),
-              onSubmitted:(value){
+              onCompleted:(value){
                 setState(() {
                   otpCode=value;
                 });
+                print(otpCode);
               } ,
               
               ),
@@ -87,6 +99,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     onPressed: (){
                       if(otpCode!=null){
                         verifyOtp(context,otpCode!);
+                        print(otpCode);
                       }else{
                         showSnackBar(context, "Enter 6-Digit code");
                       }
@@ -136,6 +149,21 @@ class _OtpScreenState extends State<OtpScreen> {
   }
   //otp
   void verifyOtp(BuildContext context ,String userotp){
+   final authinitialpro =Provider.of<AuthentificationProvider>(context,listen: false);
+    authinitialpro.verifyOtp(
+      context: context, 
+      verificationId:widget.verificationId, 
+      userOtp: userotp, 
+      onSuccess: (){
+        authinitialpro.checkExitingUser().then((value)async{
+           if(value ==true){
 
+           }
+           else{
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const UserInfo()), (route) => false);
+           }
+        });
+
+      });
   }
 }
