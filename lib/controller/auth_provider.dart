@@ -1,7 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:Firebase_auth/model/user_model.dart';
 import 'package:Firebase_auth/utils/utilities.dart';
 import 'package:Firebase_auth/view/otpscreen/otp_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,8 +17,12 @@ class AuthentificationProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? _uid;
   String get uid=> _uid!;
+  UserModel? _userModel;   
+  UserModel get userModel=> _userModel!;
   final FirebaseAuth _firebaseAuth =FirebaseAuth.instance;
  final FirebaseFirestore _firebaseFirestore =FirebaseFirestore.instance;
+  final FirebaseStorage _firebaseStorage =FirebaseStorage.instance;
+
   AuthentificationProvider(){
     checksign();
   }
@@ -23,6 +32,13 @@ class AuthentificationProvider extends ChangeNotifier {
   _isSignedIn =s.getBool("is_signedin")?? false;
   notifyListeners();
   
+}
+
+Future setSignIn()async{
+    final SharedPreferences s =await SharedPreferences.getInstance();
+    s.setBool("is_signedin", true);
+    _isSignedIn=true;
+    notifyListeners();
 }
 
 void singWithPhone(BuildContext context,String phoneNumber)async{
@@ -80,9 +96,83 @@ Future<bool> checkExitingUser()async{
     print("USER EXIST");
     return true;
   }else{
-     print(" NEw USER ");
+     print(" NEW USER ");
     return false;
   }
 }
+void saveUserDataToFirebase({
+  required BuildContext context,
+  required UserModel userModel,
+  required File profilePic,
+  required Function onSuccess,
+})async{
+   _isLoading =true;
+   notifyListeners();
+   try{
+    //upload image firebase
+   await storeFileToStorage("profilePic/$_uid", profilePic).then((value) {
+    userModel.profilePic =value;
+    userModel.createdAt =DateTime.now().millisecondsSinceEpoch.toString();
+    userModel.phoneNumber =_firebaseAuth.currentUser!.phoneNumber!;
+    userModel.uid =_firebaseAuth.currentUser!.phoneNumber!;
+
+   });
+   _userModel=userModel;
+   //uploading database
+   await _firebaseFirestore.collection("users").doc(_uid).set(userModel.toMap()).then((value) {
+    onSuccess();
+    _isLoading =false;
+    notifyListeners();
+   });
+
+   }on FirebaseAuthException catch(e){
+    showSnackBar(context, e.message.toString());
+    _isLoading =false;
+    notifyListeners();
+   }
+}
+ Future<String> storeFileToStorage(String ref, File file)async{
+  UploadTask uploadTask= _firebaseStorage.ref().child(ref).putFile(file);
+  TaskSnapshot snapshot= await uploadTask;
+  String downloadUrl =await snapshot.ref.getDownloadURL();
+  return downloadUrl;
+ }
+ 
+ Future getDataFromFireStore()async{
+   await _firebaseFirestore.collection("users").doc(_firebaseAuth.currentUser!.uid).get().then((DocumentSnapshot snapshot) {
+   _userModel =UserModel(
+    name:snapshot['name'], 
+   email: snapshot[ 'email'], 
+   bio: snapshot['bio'], 
+   profilePic: snapshot['profilePic'], 
+   createdAt: snapshot['createdAt'], 
+   phoneNumber: snapshot['phoneNumber'], 
+   uid: snapshot['uid']
+   );
+   _uid =userModel.uid;
+   });
+ }
+
+ //local store
+ Future saveUserDatasharedpreference()async{
+  SharedPreferences s= await SharedPreferences.getInstance();
+  await s.setString("user_model",jsonEncode(userModel.toMap()));
+ }
+
+ Future getDataFromsharedpreferance()async{
+    SharedPreferences s= await SharedPreferences.getInstance();
+    String data =s.getString("user_model")??'';
+    _userModel =UserModel.formMap(jsonDecode(data));
+    _uid =_userModel!.uid;
+    notifyListeners();
+ }
+ Future userSignOut()async{
+  SharedPreferences s =await SharedPreferences.getInstance() ; 
+  await _firebaseAuth.signOut();
+  _isSignedIn =false;
+  notifyListeners();
+  s.clear();
+ }
+
 }
 

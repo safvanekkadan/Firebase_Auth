@@ -36,13 +36,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               backgroundColor: Colors.orange,
               elevation: 0,
             ),
-            onPressed: () {
-              authinitialpro.isignedIn==true
-              ? Navigator.push(context,MaterialPageRoute(builder:(context)=>const HomeScreen() ))
-              :Navigator.push(context,
+            onPressed: ()async {
+              if(authinitialpro.isignedIn==true){
+               await authinitialpro.getDataFromsharedpreferance().whenComplete(() =>
+                Navigator.pushReplacement(context,MaterialPageRoute(builder:(context)=>const HomeScreen())));
+              }else{
+              Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => const RegisterScreen()));
+              }
+
             },
-            child: const Text("Gets started "),
+            child: const Text("Get started "),
           ),
         ],
       ),

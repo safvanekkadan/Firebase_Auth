@@ -1,5 +1,6 @@
 import 'package:Firebase_auth/controller/auth_provider.dart';
 import 'package:Firebase_auth/utils/utilities.dart';
+import 'package:Firebase_auth/view/homescreen/homescreen.dart';
 import 'package:Firebase_auth/view/userinfo/user_info.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -157,7 +158,7 @@ class _OtpScreenState extends State<OtpScreen> {
       onSuccess: (){
         authinitialpro.checkExitingUser().then((value)async{
            if(value ==true){
-
+          authinitialpro.getDataFromFireStore().then((value) => authinitialpro.saveUserDatasharedpreference().then((value) => authinitialpro.setSignIn().then((value) =>Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const HomeScreen()), (route) => false))));   
            }
            else{
             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const UserInfo()), (route) => false);
