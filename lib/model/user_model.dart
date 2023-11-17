@@ -17,7 +17,7 @@ class UserModel{
     required this.uid
     
 });
-  factory  UserModel.formMap(Map<String,dynamic>map){
+  factory  UserModel.fromMap(Map<String,dynamic>map){
     return UserModel(
       name: map['name']??'', 
       email: map['email']??'', 

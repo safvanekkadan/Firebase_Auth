@@ -37,8 +37,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               elevation: 0,
             ),
             onPressed: ()async {
-              if(authinitialpro.isignedIn==true){
-               await authinitialpro.getDataFromsharedpreferance().whenComplete(() =>
+              if(authinitialpro.isSignedIn==true){
+               await authinitialpro.getDataFromSP().whenComplete(() =>
                 Navigator.pushReplacement(context,MaterialPageRoute(builder:(context)=>const HomeScreen())));
               }else{
               Navigator.pushReplacement(context,

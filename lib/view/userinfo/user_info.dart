@@ -191,7 +191,7 @@ authinitialpro.saveUserDataToFirebase(
   profilePic: image!, 
   onSuccess: (){
    //once data saved store locally also
-   authinitialpro.saveUserDatasharedpreference().then((value) =>authinitialpro.setSignIn().then((value) => 
+   authinitialpro.saveUserDataToSP().then((value) =>authinitialpro.setSignIn().then((value) => 
    Navigator.pushAndRemoveUntil(
     context, MaterialPageRoute(builder: (context)=>
     const HomeScreen()), (route) => false))); 

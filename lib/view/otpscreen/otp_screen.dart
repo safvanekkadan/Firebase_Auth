@@ -149,22 +149,59 @@ class _OtpScreenState extends State<OtpScreen> {
     );
   }
   //otp
-  void verifyOtp(BuildContext context ,String userotp){
-   final authinitialpro =Provider.of<AuthentificationProvider>(context,listen: false);
+    void verifyOtp(BuildContext context, String userOtp) {
+    final authinitialpro = Provider.of<AuthentificationProvider>(context, listen: false);
     authinitialpro.verifyOtp(
-      context: context, 
-      verificationId:widget.verificationId, 
-      userOtp: userotp, 
-      onSuccess: (){
-        authinitialpro.checkExitingUser().then((value)async{
-           if(value ==true){
-          authinitialpro.getDataFromFireStore().then((value) => authinitialpro.saveUserDatasharedpreference().then((value) => authinitialpro.setSignIn().then((value) =>Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const HomeScreen()), (route) => false))));   
-           }
-           else{
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const UserInfo()), (route) => false);
-           }
-        });
-
-      });
+      context: context,
+      verificationId: widget.verificationId,
+      userOtp: userOtp,
+      onSuccess: () {
+        // checking whether user exists in the db
+        authinitialpro.checkExistingUser().then(
+          (value) async {
+            if (value == true) {
+              // user exists in our app
+              authinitialpro.getDataFromFirestore().then(
+                    (value) => authinitialpro.saveUserDataToSP().then(
+                          (value) => authinitialpro.setSignIn().then(
+                                (value) => Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const HomeScreen(),
+                                    ),
+                                    (route) => false),
+                              ),
+                        ),
+                  );
+            } else {
+              // new user
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const UserInfo()),
+                  (route) => false);
+            }
+          },
+        );
+      },
+    );
   }
+  // void verifyOtp(BuildContext context ,String userotp){
+  //  final authinitialpro =Provider.of<AuthentificationProvider>(context,listen: false);
+  //   authinitialpro.verifyOtp(
+  //     context: context, 
+  //     verificationId:widget.verificationId, 
+  //     userOtp: userotp, 
+  //     onSuccess: (){
+  //       authinitialpro.checkExistingUser().then((value)async{
+  //          if(value ==true){
+  //         authinitialpro.getDataFromFirestore().then((value) => authinitialpro.saveUserDataToSP().then((value) => authinitialpro.setSignIn().then((value) =>Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const HomeScreen()), (route) => false))));   
+  //          }
+  //          else{
+  //           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const UserInfo()), (route) => false);
+  //          }
+  //       });
+
+  //     });
+  // }
 }
